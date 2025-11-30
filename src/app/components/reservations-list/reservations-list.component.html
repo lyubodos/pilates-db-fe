@@ -1,0 +1,67 @@
+<div class="container">
+
+  <h3>Reservations Directory</h3>
+  <hr>
+
+  <!-- Add a button -->
+  <a (click)="navigateToAddReservations()"
+     class="btn btn-primary btn-sm mb-3">
+    Add Reservation
+  </a>
+
+  <table class="table table-bordered table-striped">
+    <thead class="table-dark">
+    <tr>
+      <th>First Name</th>
+      <th>Last Name</th>
+      <th>Email</th>
+      <th>Action</th>
+    </tr>
+    </thead>
+
+    <tbody>
+      @if (reservations$ | async; as reservations) {
+        <tr *ngFor="let reservation of reservations">
+          <td>{{ reservation.firstName }}</td>
+          <td>{{ reservation.lastName }}</td>
+          <td>{{ reservation.email }}</td>
+
+          <td>
+            <div>
+              <div class="col-small">
+                <input type="hidden" name="employeeId" value="tempEmployee.id"/>
+                <button type="submit" class="btn btn-info btn-sm me-1" style="float:left;">Update</button>
+              </div>
+              <div class="col-small">
+                <button class="btn btn-danger"
+                        (click)="openModal(reservation.id)">Delete
+                </button>
+                <div class="modal fade" tabindex="-1" #deleteModal>
+                  <div class="modal-dialog">
+                    <div class="modal-content">
+
+                      <div class="modal-header">
+                        <h5 class="modal-title">Confirm Delete</h5>
+                      </div>
+
+                      <div class="modal-body">
+                        Are you sure you want to delete this item?
+                      </div>
+
+                      <div class="modal-footer">
+                        <button class="btn btn-secondary" (click)="closeModal()">Cancel</button>
+                        <button class="btn btn-danger" (click)="onDelete(reservation)">Delete</button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </td>
+
+        </tr>
+      }
+    </tbody>
+  </table>
+
+</div>
