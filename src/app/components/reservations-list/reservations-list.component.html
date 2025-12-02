@@ -1,67 +1,96 @@
 <div class="container">
+  <mat-card class="mat-elevation-z4 title-header">
+    <mat-card-title class="general-title">Reservations Directory</mat-card-title>
+    <mat-card-subtitle class="general-subtitle">Manage your training reservations</mat-card-subtitle>
 
-  <h3>Reservations Directory</h3>
-  <hr>
+    <mat-card-content>
+      <!-- Add Reservation button -->
+      <div class="mb-3">
+        <button
+          mat-raised-button
+          color="primary"
+          (click)="navigateToAddReservations()">
+          Add Reservation
+        </button>
+      </div>
+    </mat-card-content>
+  </mat-card>
 
-  <!-- Add a button -->
-  <a (click)="navigateToAddReservations()"
-     class="btn btn-primary btn-sm mb-3">
-    Add Reservation
-  </a>
+  <!-- Material Table -->
+  @if (reservations$ | async; as reservations) {
+    <table
+      mat-table
+      [dataSource]="reservations"
+      class="mat-elevation-z8 full-width-table">
 
-  <table class="table table-bordered table-striped">
-    <thead class="table-dark">
-    <tr>
-      <th>First Name</th>
-      <th>Last Name</th>
-      <th>Email</th>
-      <th>Action</th>
-    </tr>
-    </thead>
+      <!-- First Name Column -->
+      <ng-container matColumnDef="firstName">
+        <th mat-header-cell *matHeaderCellDef> First Name </th>
+        <td mat-cell *matCellDef="let reservation">
+          {{ reservation.firstName }}
+        </td>
+      </ng-container>
 
-    <tbody>
-      @if (reservations$ | async; as reservations) {
-        <tr *ngFor="let reservation of reservations">
-          <td>{{ reservation.firstName }}</td>
-          <td>{{ reservation.lastName }}</td>
-          <td>{{ reservation.email }}</td>
+      <!-- Last Name Column -->
+      <ng-container matColumnDef="lastName">
+        <th mat-header-cell *matHeaderCellDef> Last Name </th>
+        <td mat-cell *matCellDef="let reservation">
+          {{ reservation.lastName }}
+        </td>
+      </ng-container>
 
-          <td>
-            <div>
-              <div class="col-small">
-                <input type="hidden" name="employeeId" value="tempEmployee.id"/>
-                <button type="submit" class="btn btn-info btn-sm me-1" style="float:left;">Update</button>
-              </div>
-              <div class="col-small">
-                <button class="btn btn-danger"
-                        (click)="openModal(reservation.id)">Delete
-                </button>
-                <div class="modal fade" tabindex="-1" #deleteModal>
-                  <div class="modal-dialog">
-                    <div class="modal-content">
+      <!-- Email Column -->
+      <ng-container matColumnDef="email">
+        <th mat-header-cell *matHeaderCellDef> Email </th>
+        <td mat-cell *matCellDef="let reservation">
+          {{ reservation.email }}
+        </td>
+      </ng-container>
 
-                      <div class="modal-header">
-                        <h5 class="modal-title">Confirm Delete</h5>
-                      </div>
+      <!-- Actions Column -->
+      <ng-container matColumnDef="actions">
+        <th mat-header-cell *matHeaderCellDef> Action </th>
+        <td mat-cell *matCellDef="let reservation">
 
-                      <div class="modal-body">
-                        Are you sure you want to delete this item?
-                      </div>
+          <button
+            mat-stroked-button
+            color="primary"
+            class="me-2"
+            (click)="onUpdate(reservation)">
+            Update
+          </button>
 
-                      <div class="modal-footer">
-                        <button class="btn btn-secondary" (click)="closeModal()">Cancel</button>
-                        <button class="btn btn-danger" (click)="onDelete(reservation)">Delete</button>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </td>
+          <button
+            mat-raised-button
+            color="warn"
+            (click)="openDeleteDialog(reservation)">
+            Delete
+          </button>
+        </td>
+      </ng-container>
 
-        </tr>
-      }
-    </tbody>
-  </table>
+      <!-- Header & Row Declarations -->
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+
+    </table>
+
+  }
+  <!-- Delete confirmation dialog template -->
+  <ng-template #deleteDialog let-data>
+    <h2 mat-dialog-title>Confirm Delete</h2>
+
+    <mat-dialog-content>
+      Are you sure you want to delete
+      <strong>{{ data.firstName }} {{ data.lastName }}</strong>?
+    </mat-dialog-content>
+
+    <mat-dialog-actions align="end">
+      <button mat-button mat-dialog-close="false">Cancel</button>
+      <button mat-raised-button color="warn" mat-dialog-close="true">
+        Delete
+      </button>
+    </mat-dialog-actions>
+  </ng-template>
 
 </div>

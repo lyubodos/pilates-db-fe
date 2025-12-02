@@ -1,60 +1,94 @@
-import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
-import {AsyncPipe, NgForOf} from "@angular/common";
-import {ReservationData} from "../../data/reservation.data";
+import {Component, OnInit, TemplateRef, ViewChild} from '@angular/core';
+import {AsyncPipe} from "@angular/common";
+import {UserData} from "../../data/userData";
 import {Observable, startWith} from "rxjs";
 import {ReservationsService} from "../../services/reservations.service";
-import {HttpClient} from "@angular/common/http";
 import {Router} from "@angular/router";
+import {MatCard, MatCardContent, MatCardSubtitle, MatCardTitle} from "@angular/material/card";
+import {
+  MatCell,
+  MatColumnDef,
+  MatHeaderCell,
+  MatHeaderRow,
+  MatRow,
+  MatTable,
+  MatTableModule
+} from "@angular/material/table";
+import {MatDialog, MatDialogActions, MatDialogClose, MatDialogContent, MatDialogTitle} from "@angular/material/dialog";
+import {MatButton} from "@angular/material/button";
 
 @Component({
   selector: 'app-reservations-list',
   standalone: true,
   imports: [
-    NgForOf,
-    AsyncPipe
+    AsyncPipe,
+    MatCardContent,
+    MatCardTitle,
+    MatCardSubtitle,
+    MatCard,
+    MatCell,
+    MatHeaderCell,
+    MatColumnDef,
+    MatDialogContent,
+    MatDialogActions,
+    MatDialogClose,
+    MatButton,
+    MatDialogTitle,
+    MatTable,
+    MatTableModule,
+    MatHeaderRow,
+    MatRow
   ],
   templateUrl: './reservations-list.component.html',
   styleUrl: './reservations-list.component.scss'
 })
 export class ReservationsListComponent implements OnInit {
-  public reservations$: Observable<ReservationData[]> | undefined;
+  @ViewChild('deleteDialog') deleteDialogTpl!: TemplateRef<any>;
+
+  public displayedColumns: string[] = ['firstName', 'lastName', 'email', 'actions'];
+  public reservations$: Observable<UserData[]> | undefined;
 
 
-  @ViewChild('deleteModal') deleteModal!: ElementRef;
-  selectedId!: number;
-
-  constructor(private reservationsService: ReservationsService, private router: Router, private httpClient: HttpClient) {
+  constructor(private reservationsService: ReservationsService, private router: Router, private dialog: MatDialog) {
   }
 
   public ngOnInit() {
     this.loadReservations();
   }
 
-  public loadReservations(): void {
-    this.reservations$ = this.reservationsService.getReservations().pipe(startWith([]));
+
+  public onUpdate(reservation: UserData) {
+    // navigate to edit or open edit form
   }
 
-  public onDelete(reservation: ReservationData) {
-    this.httpClient.post("http://localhost:8080/reservations/delete", reservation.id).subscribe(() => {
-      this.loadReservations();
+  public openDeleteDialog(reservation: UserData) {
+    const dialogRef = this.dialog.open(this.deleteDialogTpl, {
+      data: reservation,
+      backdropClass: 'custom-backdrop' // optional: darker background
     });
 
+    dialogRef.afterClosed().subscribe(result => {
+      console.log(result)
+      if (result === 'true') {
+        this.onDeleteRedervation(reservation);
+      }
+    });
+  }
+
+  public onDeleteRedervation(reservation: UserData) {
+    this.reservationsService.onDeleteReservation(reservation.id)
+      .subscribe(() => {
+        this.loadReservations();
+      });
     console.log(`Reservations deleted: ${reservation}`);
-  }
-
-
-  openModal(id: number) {
-    this.selectedId = id;
-    (this.deleteModal.nativeElement as any).classList.add('show');
-    (this.deleteModal.nativeElement as any).style.display = 'block';
-  }
-
-  closeModal() {
-    (this.deleteModal.nativeElement as any).classList.remove('show');
-    (this.deleteModal.nativeElement as any).style.display = 'none';
   }
 
   public navigateToAddReservations(): void {
     this.router.navigate(['/add']);
+  }
+
+
+  private loadReservations(): void {
+    this.reservations$ = this.reservationsService.getReservations().pipe(startWith([]));
   }
 }

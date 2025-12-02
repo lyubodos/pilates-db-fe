@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import {ReservationsListComponent} from "./components/reservations-list/reservations-list.component";
-import {HttpClient} from "@angular/common/http";
+import { HttpClient } from "@angular/common/http";
 import {ReservationsService} from "./services/reservations.service";
 
 @Component({

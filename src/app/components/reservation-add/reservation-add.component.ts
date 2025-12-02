@@ -1,8 +1,7 @@
 import {Component} from '@angular/core';
 import {FormBuilder, FormGroup, ReactiveFormsModule, Validators} from "@angular/forms";
-import {HttpClient} from "@angular/common/http";
-import {ReservationData} from "../../data/reservation.data";
-import {RouterLink} from "@angular/router";
+import {Router, RouterLink} from "@angular/router";
+import {ReservationsService} from "../../services/reservations.service";
 
 @Component({
   selector: 'app-reservation-add',
@@ -18,7 +17,7 @@ export class ReservationAddComponent {
 
   reservationForm!: FormGroup;
 
-  constructor(private fb: FormBuilder, private httpClient: HttpClient) {
+  constructor(private fb: FormBuilder, private router: Router, private reservationsService: ReservationsService) {
   }
 
 
@@ -33,7 +32,9 @@ export class ReservationAddComponent {
   public submit(): void {
     if (this.reservationForm.valid) {
       const value = this.reservationForm.value;
-      this.httpClient.post<ReservationData>("http://localhost:8080/reservations/save", this.reservationForm.value).pipe().subscribe();
+      this.reservationsService.onSave(value).subscribe(() => {
+        this.router.navigate(['/']);
+      })
       console.log('Form value:', value);
     }
   }
