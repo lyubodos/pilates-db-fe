@@ -4,16 +4,16 @@ import {Router, RouterLink} from "@angular/router";
 import {ReservationsService} from "../../services/reservations.service";
 
 @Component({
-  selector: 'app-reservation-add',
+  selector: 'user-add.component',
   standalone: true,
   imports: [
     ReactiveFormsModule,
     RouterLink
   ],
-  templateUrl: './reservation-add.component.html',
-  styleUrl: './reservation-add.component.scss'
+  templateUrl: './user-add.component.html',
+  styleUrl: './user-add.component.scss'
 })
-export class ReservationAddComponent {
+export class UserAddComponent {
 
   reservationForm!: FormGroup;
 
@@ -32,7 +32,7 @@ export class ReservationAddComponent {
   public submit(): void {
     if (this.reservationForm.valid) {
       const value = this.reservationForm.value;
-      this.reservationsService.onSave(value).subscribe(() => {
+      this.reservationsService.onSaveUser(value).subscribe(() => {
         this.router.navigate(['/']);
       })
       console.log('Form value:', value);

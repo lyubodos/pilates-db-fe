@@ -1,7 +1,10 @@
 export interface ReservationSlot {
-  reservationDate: string;
+  id: number;
+  sessionDate: string;
   startTime: string;
   endTime: string;
-  maxSlots: number;
-  bookedSlots: number;
+  status: string;
+  remainingSlots: string;
+  capacity: number;
+  trainingType: string;
 }

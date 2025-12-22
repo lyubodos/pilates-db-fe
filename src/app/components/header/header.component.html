@@ -1,0 +1,12 @@
+<mat-toolbar color="primary">
+  <span class="logo">Training Platform</span>
+
+  <span class="spacer"></span>
+
+  <!-- Show when logged in -->
+  <ng-container *ngIf="isLoggedIn$ | async">
+    <button mat-button (click)="logout()">
+      Logout
+    </button>
+  </ng-container>
+</mat-toolbar>

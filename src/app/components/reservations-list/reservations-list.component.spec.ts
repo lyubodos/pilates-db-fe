@@ -11,7 +11,7 @@ describe('ReservationsListComponent', () => {
       imports: [ReservationsListComponent]
     })
     .compileComponents();
-    
+
     fixture = TestBed.createComponent(ReservationsListComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();

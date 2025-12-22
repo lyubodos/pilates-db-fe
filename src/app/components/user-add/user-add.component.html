@@ -1,0 +1,19 @@
+<div class="container">
+
+  <h3>Reservations Directory</h3>
+  <hr>
+
+  <p class="h4 mb-4">Save User</p>
+
+  <form [formGroup]="reservationForm" (ngSubmit)="submit()">
+    <input class="form-control mb-4 w-25" type="text" formControlName="firstName" placeholder="First name">
+    <input class="form-control mb-4 w-25" type="text" formControlName="lastName" placeholder="Last name">
+    <input class="form-control mb-4 w-25" type="email" formControlName="email" placeholder="E-mail">
+
+    <button type="submit" class="btn btn-info col-2" [disabled]="reservationForm.invalid">Save</button>
+  </form>
+
+  <hr>
+  <a routerLink="/">Back to Client List</a>
+
+</div>

@@ -1,52 +1,52 @@
-import {Component, OnInit, TemplateRef, ViewChild} from '@angular/core';
-import {AsyncPipe} from "@angular/common";
-import {UserData} from "../../data/userData";
+import {Component, TemplateRef, ViewChild} from '@angular/core';
 import {Observable, startWith} from "rxjs";
 import {ReservationsService} from "../../services/reservations.service";
 import {Router} from "@angular/router";
-import {MatCard, MatCardContent, MatCardSubtitle, MatCardTitle} from "@angular/material/card";
+import {MatDialog, MatDialogActions, MatDialogClose, MatDialogContent, MatDialogTitle} from "@angular/material/dialog";
+import {AsyncPipe} from "@angular/common";
+import {MatButton} from "@angular/material/button";
 import {
   MatCell,
+  MatCellDef,
   MatColumnDef,
   MatHeaderCell,
   MatHeaderRow,
+  MatHeaderRowDef,
   MatRow,
-  MatTable,
-  MatTableModule
+  MatRowDef,
+  MatTable, MatTableModule
 } from "@angular/material/table";
-import {MatDialog, MatDialogActions, MatDialogClose, MatDialogContent, MatDialogTitle} from "@angular/material/dialog";
-import {MatButton} from "@angular/material/button";
+import {ReservationSlot} from "../../data/reservation-slot.data";
 
 @Component({
   selector: 'app-reservations-list',
   standalone: true,
   imports: [
     AsyncPipe,
-    MatCardContent,
-    MatCardTitle,
-    MatCardSubtitle,
-    MatCard,
+    MatTableModule,
+    MatButton,
     MatCell,
-    MatHeaderCell,
+    MatCellDef,
     MatColumnDef,
-    MatDialogContent,
     MatDialogActions,
     MatDialogClose,
-    MatButton,
+    MatDialogContent,
     MatDialogTitle,
-    MatTable,
-    MatTableModule,
+    MatHeaderCell,
     MatHeaderRow,
-    MatRow
+    MatHeaderRowDef,
+    MatRow,
+    MatRowDef,
+    MatTable
   ],
   templateUrl: './reservations-list.component.html',
   styleUrl: './reservations-list.component.scss'
 })
-export class ReservationsListComponent implements OnInit {
+export class ReservationsListComponent {
   @ViewChild('deleteDialog') deleteDialogTpl!: TemplateRef<any>;
 
-  public displayedColumns: string[] = ['firstName', 'lastName', 'email', 'actions'];
-  public reservations$: Observable<UserData[]> | undefined;
+  public displayedColumns: string[] = ['sessionDate', 'startTime', 'endTime', 'trainingType', 'capacity', 'status', 'remainingSlots', 'actions'];
+  public reservations$: Observable<ReservationSlot[]> | undefined;
 
 
   constructor(private reservationsService: ReservationsService, private router: Router, private dialog: MatDialog) {
@@ -54,14 +54,17 @@ export class ReservationsListComponent implements OnInit {
 
   public ngOnInit() {
     this.loadReservations();
+    console.log(this.reservations$?.subscribe((reservations) => {
+      console.log(reservations)
+    }))
   }
 
 
-  public onUpdate(reservation: UserData) {
+  public onUpdateReservations(reservation: ReservationSlot) {
     // navigate to edit or open edit form
   }
 
-  public openDeleteDialog(reservation: UserData) {
+  public openDeleteDialog(reservation: ReservationSlot) {
     const dialogRef = this.dialog.open(this.deleteDialogTpl, {
       data: reservation,
       backdropClass: 'custom-backdrop' // optional: darker background
@@ -70,12 +73,12 @@ export class ReservationsListComponent implements OnInit {
     dialogRef.afterClosed().subscribe(result => {
       console.log(result)
       if (result === 'true') {
-        this.onDeleteRedervation(reservation);
+        this.onDeleteReservation(reservation);
       }
     });
   }
 
-  public onDeleteRedervation(reservation: UserData) {
+  public onDeleteReservation(reservation: ReservationSlot) {
     this.reservationsService.onDeleteReservation(reservation.id)
       .subscribe(() => {
         this.loadReservations();
@@ -83,8 +86,8 @@ export class ReservationsListComponent implements OnInit {
     console.log(`Reservations deleted: ${reservation}`);
   }
 
-  public navigateToAddReservations(): void {
-    this.router.navigate(['/add']);
+  public navigateToMain(){
+    this.router.navigate(['/']);
   }
 
 

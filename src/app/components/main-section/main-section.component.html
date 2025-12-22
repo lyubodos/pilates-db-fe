@@ -1,0 +1,28 @@
+<app-header></app-header>
+<div class="container">
+  <mat-card class="mat-elevation-z4 title-header">
+    <mat-card-title class="general-title">Reservations Directory</mat-card-title>
+    <mat-card-subtitle class="general-subtitle mt-4">Manage your training reservations</mat-card-subtitle>
+
+      <div class="btn_container">
+        <button
+          mat-raised-button
+          color="primary"
+          (click)="navigateUsers()">
+          Users
+        </button>
+        <button
+          class="reservations_btn"
+          mat-raised-button
+          color="primary"
+          (click)="navigateToReservations()">
+          Reservations
+        </button>
+      </div>
+  </mat-card>
+
+  <user-data-list></user-data-list>
+  <div class="mt-5 mb-4">
+    <app-reservations-list></app-reservations-list>
+  </div>
+</div>

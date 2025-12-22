@@ -1,0 +1,58 @@
+<div class="register-page">
+  <mat-card class="register-card">
+    <mat-card-header>
+      <mat-card-title>Create account</mat-card-title>
+      <mat-card-subtitle>Fill in your details</mat-card-subtitle>
+    </mat-card-header>
+
+    <mat-card-content>
+      <form (ngSubmit)="submit()" #form="ngForm">
+
+        <div class="grid">
+          <mat-form-field appearance="outline" class="full">
+            <mat-label>First name</mat-label>
+            <input matInput name="firstName" [(ngModel)]="firstName" required />
+            <mat-error *ngIf="form.submitted && !firstName">First name is required</mat-error>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="full">
+            <mat-label>Last name</mat-label>
+            <input matInput name="lastName" [(ngModel)]="lastName" required />
+            <mat-error *ngIf="form.submitted && !lastName">Last name is required</mat-error>
+          </mat-form-field>
+        </div>
+
+        <mat-form-field appearance="outline" class="full">
+          <mat-label>Email</mat-label>
+          <input matInput type="email" name="email" [(ngModel)]="email" required />
+          <mat-error *ngIf="form.submitted && !email">Email is required</mat-error>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="full">
+          <mat-label>Username</mat-label>
+          <input matInput name="username" [(ngModel)]="username" required />
+          <mat-error *ngIf="form.submitted && !username">Username is required</mat-error>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="full">
+          <mat-label>Password</mat-label>
+          <input matInput type="password" name="password" [(ngModel)]="password" required />
+          <mat-error *ngIf="form.submitted && !password">Password is required</mat-error>
+        </mat-form-field>
+
+        <mat-error *ngIf="error" class="error">{{ error }}</mat-error>
+        <div *ngIf="success" class="success">{{ success }}</div>
+
+        <button mat-raised-button color="primary" class="full" type="submit">
+          Register
+        </button>
+
+        <div class="login-link">
+          Already have an account?
+          <a routerLink="/login">Log in</a>
+        </div>
+
+      </form>
+    </mat-card-content>
+  </mat-card>
+</div>

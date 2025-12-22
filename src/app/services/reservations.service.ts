@@ -2,7 +2,14 @@ import {Injectable} from "@angular/core";
 import {HttpClient} from "@angular/common/http";
 import {UserData} from "../data/userData";
 import {Observable, of} from "rxjs";
-import {DELETE_USER, RESERVATIONS_LIST, SAVE_USER} from "../data/backend-paths.data";
+import {
+  DELETE_RESERVATION,
+  DELETE_USER,
+  RESERVATIONS_LIST,
+  RESERVATIONS_LIST_ALL,
+  SAVE_USER
+} from "../data/backend-paths.data";
+import {ReservationSlot} from "../data/reservation-slot.data";
 
 @Injectable({
   providedIn: "root"
@@ -13,17 +20,26 @@ export class ReservationsService {
   constructor(private httpClient: HttpClient) {
   }
 
-  public getReservations(): Observable<UserData[]> {
+  public getUsers(): Observable<UserData[]> {
     return this.httpClient
       .get<UserData[]>(`${this.LOCAL_HOST_PATH}/${RESERVATIONS_LIST}`)
   }
 
-  public onSave(userData: any): Observable<UserData> {
+  public getReservations(): Observable<ReservationSlot[]> {
+    return this.httpClient
+      .get<ReservationSlot[]>(`${this.LOCAL_HOST_PATH}/${RESERVATIONS_LIST_ALL}`)
+  }
+
+  public onSaveUser(userData: any): Observable<UserData> {
     return this.httpClient.post<UserData>(`${this.LOCAL_HOST_PATH}/${SAVE_USER}`, userData);
   }
 
-  public onDeleteReservation(id: number): Observable<void> {
+  public onDeleteUser(id: number): Observable<void> {
     return this.httpClient.post<void>(`${this.LOCAL_HOST_PATH}/${DELETE_USER}`, id);
+  }
+
+  public onDeleteReservation(id : number): Observable<void> {
+    return this.httpClient.post<void>(`${this.LOCAL_HOST_PATH}/${DELETE_RESERVATION}`, id);
   }
 
 }
