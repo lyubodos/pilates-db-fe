@@ -1,12 +1,23 @@
-mat-toolbar {
-  display: flex;
-}
-
 .logo {
   font-weight: 600;
   font-size: 18px;
+  margin-right: 16px;
 }
 
 .spacer {
   flex: 1 1 auto;
+}
+
+button[mat-button] {
+  margin-right: 4px;
+}
+
+.active {
+  font-weight: 600;
+  text-decoration: underline;
+}
+
+.logged-user {
+  font-size: 0.8rem;
+  font-weight: 500;
 }

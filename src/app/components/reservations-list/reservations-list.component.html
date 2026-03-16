@@ -4,12 +4,15 @@
   @if (reservations$ | async; as reservations) {
     <table
       mat-table
+      matSort
+      matSortActive="sessionDate"
+      matSortDirection="desc"
       [dataSource]="reservations"
       class="mat-elevation-z8 full-width-table">
 
       <!-- Session Column -->
       <ng-container matColumnDef="sessionDate">
-        <th mat-header-cell *matHeaderCellDef class="mat_header_title"> Date</th>
+        <th mat-header-cell *matHeaderCellDef class="mat_header_title">Date</th>
         <td mat-cell *matCellDef="let reservation">
           {{ reservation.sessionDate }}
         </td>
@@ -68,20 +71,32 @@
         <th mat-header-cell *matHeaderCellDef class="mat_header_title"> Action</th>
         <td mat-cell *matCellDef="let reservation">
 
-          <button
-            mat-stroked-button
-            color="primary"
-            class="me-2"
-            (click)="onUpdateReservations(reservation)">
-            Update
-          </button>
+          @if (checkStatus(reservation) && !getAdminValue() && reservation.status !== 'Cancelled') {
+            <button
+              *ngIf="!reservation.bookedByMe"
+              mat-stroked-button
+              color="primary"
+              class="me-2"
+              (click)="onBookTraining(reservation)">
+              Reserve
+            </button>
+          }
 
-          <button
-            mat-raised-button
-            color="warn"
-            (click)="openDeleteDialog(reservation)">
-            Delete
-          </button>
+          @if (reservation.bookedByMe) {
+            <span>Already booked</span>
+          } @else if (reservation.status === 'Full') {
+            <span>Fully booked</span>
+          } @else if (reservation.status === 'Cancelled') {
+            <span>Session is cancelled</span>
+          } @else if (getAdminValue()) {
+            <button
+              *ngIf="!reservation.bookedByMe"
+              mat-raised-button
+              color="warn"
+              (click)="onCancelReservation(reservation)">
+              Cancel
+            </button>
+          }
         </td>
       </ng-container>
 
@@ -91,7 +106,7 @@
 
     </table>
 
-    @if (reservations.length === 0){
+    @if (reservations.length === 0) {
       <p class="text-center mt-5">No current reservations found.</p>
     }
 

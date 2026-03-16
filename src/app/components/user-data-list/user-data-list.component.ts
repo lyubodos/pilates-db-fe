@@ -1,7 +1,7 @@
 import {Component, Input, OnInit, TemplateRef, ViewChild} from '@angular/core';
 import {AsyncPipe} from "@angular/common";
 import {UserData} from "../../data/userData";
-import {Observable, startWith} from "rxjs";
+import {map, Observable, startWith} from "rxjs";
 import {ReservationsService} from "../../services/reservations.service";
 import {Router} from "@angular/router";
 import {
@@ -15,6 +15,7 @@ import {
 } from "@angular/material/table";
 import {MatDialog, MatDialogActions, MatDialogClose, MatDialogContent, MatDialogTitle} from "@angular/material/dialog";
 import {MatButton} from "@angular/material/button";
+import {AuthService} from "../../services/auth.service";
 
 @Component({
   selector: 'user-data-list',
@@ -44,17 +45,19 @@ export class UserDataListComponent implements OnInit {
 
   public displayedColumns: string[] = ['firstName', 'lastName', 'email', 'actions'];
   public users$: Observable<UserData[]> | undefined;
+  public isAdmin: boolean = false;
 
 
-  constructor(private reservationsService: ReservationsService, private router: Router, private dialog: MatDialog) {
+  constructor(private authService: AuthService, private reservationsService: ReservationsService, private router: Router, private dialog: MatDialog) {
   }
 
   public ngOnInit() {
     this.loadUsers();
+    this.checkAdminRights()
   }
 
 
-  public onUpdateUser(reservation: UserData) {
+  public onUpdateUser(userData: UserData) {
     // navigate to edit or open edit form
   }
 
@@ -77,14 +80,30 @@ export class UserDataListComponent implements OnInit {
 
 
   private loadUsers(): void {
-    this.users$ = this.reservationsService.getUsers().pipe(startWith([]));
+    let currentUser: string | null;
+    this.authService.getLoggedInUser().subscribe((user => {
+     if(user == ""){
+       currentUser = localStorage.getItem("username");
+     } else{
+       currentUser = user;
+     }
+    }));
+    this.users$ = this.reservationsService.getUsers()
+      .pipe(
+        map(users => users.filter(u => u.username !== currentUser)),
+        startWith([])
+      );
   }
 
-  private onDeleteUser(reservation: UserData) {
-    this.reservationsService.onDeleteUser(reservation.id)
+  private onDeleteUser(user: UserData) {
+    this.reservationsService.onDeleteUser(user.id)
       .subscribe(() => {
         this.loadUsers();
       });
-    console.log(`Reservations deleted: ${reservation}`);
+    console.log(`User deleted: ${user}`);
+  }
+
+  private checkAdminRights() {
+    this.isAdmin = this.authService.hasRole("ROLE_ADMIN");
   }
 }

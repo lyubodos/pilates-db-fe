@@ -6,6 +6,7 @@ import {UserDataListComponent} from "./components/user-data-list/user-data-list.
 import {LoginComponent} from "./components/login/login.component";
 import {AuthGuard} from "./guards/auth.guard";
 import {RegisterComponent} from "./components/register/register.component";
+import {ResFormComponent} from "./components/res-form/res-form.component";
 
 export const routes: Routes = [
   {
@@ -27,19 +28,27 @@ export const routes: Routes = [
   {
     path: 'reservationsList',
     pathMatch: 'full',
-    component: ReservationsListComponent
+    component: ReservationsListComponent,
+    canActivate: [AuthGuard]
   },
 
   {
     path: 'usersList',
     pathMatch: 'full',
-    component: UserDataListComponent
+    component: UserDataListComponent,
+    canActivate: [AuthGuard]
   },
 
   {
     path: 'addUser',
     pathMatch: 'full',
-    component: UserAddComponent
+    component: UserAddComponent,
+    canActivate: [AuthGuard]
+  },
+  {
+    path: 'resForm',
+    pathMatch: 'full',
+    component: ResFormComponent,
   },
 
 

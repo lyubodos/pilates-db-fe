@@ -1,13 +1,25 @@
 import {Injectable} from "@angular/core";
-import {HttpHandler, HttpInterceptor, HttpRequest} from "@angular/common/http";
+import {HttpErrorResponse, HttpHandler, HttpInterceptor, HttpRequest} from "@angular/common/http";
 import {AuthService} from "./auth.service";
+import {catchError, throwError} from "rxjs";
 
 @Injectable()
 export class JwtInterceptor implements HttpInterceptor {
   constructor(private auth: AuthService) {}
   intercept(req: HttpRequest<any>, next: HttpHandler) {
-    const token = this.auth.token();
-    if (!token) return next.handle(req);
-    return next.handle(req.clone({ setHeaders: { Authorization: `Bearer ${token}` } }));
+    const isApiCall = req.url.startsWith('/');
+
+    const reqWithCreds = isApiCall
+      ? req.clone({ withCredentials: true })
+      : req;
+
+    return next.handle(reqWithCreds).pipe(
+      catchError((err: HttpErrorResponse) => {
+        if (err.status === 401) {
+          this.auth.logout('unauthorized');
+        }
+        return throwError(() => err);
+      })
+    );
   }
 }

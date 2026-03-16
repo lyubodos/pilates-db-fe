@@ -1,12 +1,38 @@
 <mat-toolbar color="primary">
-  <span class="logo">Training Platform</span>
+<!-- Left: Logo -->
+<span class="logo">Training Platform</span>
 
-  <span class="spacer"></span>
+<!-- Left nav links (only when logged in) -->
+<ng-container *ngIf="isLoggedIn$ | async">
+  <button mat-button routerLink="/" routerLinkActive="active">
+    Home
+  </button>
 
-  <!-- Show when logged in -->
-  <ng-container *ngIf="isLoggedIn$ | async">
-    <button mat-button (click)="logout()">
-      Logout
+  @if(isAdmin()){
+    <button mat-button routerLink="/usersList" routerLinkActive="active">
+      Users
     </button>
-  </ng-container>
+  }
+
+  <button mat-button routerLink="/reservationsList" routerLinkActive="active">
+    Reservations
+  </button>
+  <button mat-button routerLink="/resForm" routerLinkActive="active">
+    ResForm
+  </button>
+</ng-container>
+
+<span class="spacer"></span>
+
+<!-- Logged-in username -->
+@if (loggedInUser) {
+  <span class="logged-user">{{ loggedInUser }}</span>
+}
+
+<!-- Logout -->
+<ng-container *ngIf="isLoggedIn$ | async">
+  <button mat-button (click)="logout()">
+    Logout
+  </button>
+</ng-container>
 </mat-toolbar>

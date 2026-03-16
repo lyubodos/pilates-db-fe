@@ -1,9 +1,9 @@
-import {Component, TemplateRef, ViewChild} from '@angular/core';
+import {AfterViewInit, Component, OnInit, TemplateRef, ViewChild} from '@angular/core';
 import {Observable, startWith} from "rxjs";
 import {ReservationsService} from "../../services/reservations.service";
 import {Router} from "@angular/router";
 import {MatDialog, MatDialogActions, MatDialogClose, MatDialogContent, MatDialogTitle} from "@angular/material/dialog";
-import {AsyncPipe} from "@angular/common";
+import {AsyncPipe, NgIf} from "@angular/common";
 import {MatButton} from "@angular/material/button";
 import {
   MatCell,
@@ -17,6 +17,8 @@ import {
   MatTable, MatTableModule
 } from "@angular/material/table";
 import {ReservationSlot} from "../../data/reservation-slot.data";
+import {AuthService} from "../../services/auth.service";
+import {MatSort} from "@angular/material/sort";
 
 @Component({
   selector: 'app-reservations-list',
@@ -37,31 +39,42 @@ import {ReservationSlot} from "../../data/reservation-slot.data";
     MatHeaderRowDef,
     MatRow,
     MatRowDef,
-    MatTable
+    MatTable,
+    NgIf,
+    MatSort
   ],
   templateUrl: './reservations-list.component.html',
   styleUrl: './reservations-list.component.scss'
 })
-export class ReservationsListComponent {
+export class ReservationsListComponent implements OnInit, AfterViewInit{
   @ViewChild('deleteDialog') deleteDialogTpl!: TemplateRef<any>;
+  @ViewChild(MatSort) sort!: MatSort;
 
   public displayedColumns: string[] = ['sessionDate', 'startTime', 'endTime', 'trainingType', 'capacity', 'status', 'remainingSlots', 'actions'];
   public reservations$: Observable<ReservationSlot[]> | undefined;
 
 
-  constructor(private reservationsService: ReservationsService, private router: Router, private dialog: MatDialog) {
+  constructor(private reservationsService: ReservationsService, private router: Router, private dialog: MatDialog, private authService: AuthService) {
   }
 
   public ngOnInit() {
     this.loadReservations();
-    console.log(this.reservations$?.subscribe((reservations) => {
-      console.log(reservations)
-    }))
+  }
+
+  ngAfterViewInit() {
   }
 
 
-  public onUpdateReservations(reservation: ReservationSlot) {
-    // navigate to edit or open edit form
+  public onBookTraining(reservation: ReservationSlot) {
+    this.reservationsService.onBookReservation(reservation.id).subscribe(() => {
+      this.loadReservations();
+    });
+  }
+
+  public onCancelReservation(reservation: ReservationSlot) {
+    this.reservationsService.onCancelReservation(reservation.id).subscribe(() => {
+      this.loadReservations();
+    });
   }
 
   public openDeleteDialog(reservation: ReservationSlot) {
@@ -86,8 +99,16 @@ export class ReservationsListComponent {
     console.log(`Reservations deleted: ${reservation}`);
   }
 
-  public navigateToMain(){
+  public checkStatus(reservation: ReservationSlot){
+    return reservation.status != "Full";
+  }
+
+  public navigateToMain() {
     this.router.navigate(['/']);
+  }
+
+  public getAdminValue() {
+    return this.authService.isAdmin() == "true";
   }
 
 

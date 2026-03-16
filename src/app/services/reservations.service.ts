@@ -42,4 +42,13 @@ export class ReservationsService {
     return this.httpClient.post<void>(`${this.LOCAL_HOST_PATH}/${DELETE_RESERVATION}`, id);
   }
 
+  public onBookReservation(id : number): Observable<void> {
+    return this.httpClient.post<void>(`${this.LOCAL_HOST_PATH}/reservations/${id}/reserve`, {});
+  }
+
+  public onCancelReservation(id : number): Observable<void> {
+    return this.httpClient.post<void>(`${this.LOCAL_HOST_PATH}/reservations/${id}/cancel`, {});
+  }
+
+
 }

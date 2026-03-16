@@ -7,4 +7,5 @@ export interface ReservationSlot {
   remainingSlots: string;
   capacity: number;
   trainingType: string;
+  bookedByMe: boolean;
 }
