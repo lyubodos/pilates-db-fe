@@ -1,10 +1,42 @@
 
+.section-container {
+  min-height: 100vh;
+
+  //padding: 32px 16px;
+  background: linear-gradient(to bottom right, #f8fafc, #eef2f7);
+
+  @media (min-width: 700px) {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 32px 16px;
+  }
+}
 
 .form-container {
+  //background: #ffe3e3;
+  //box-shadow: 0 0 50px rgba(0, 0, 0, 0.4), 0 1px 3px rgba(0, 0, 0, 0.1);
   display: flex;
   flex-direction: column;
   gap: 16px;
   padding: 2rem;
+
+  @media (min-width: 700px) {
+    //border-radius: 10px;
+  }
+}
+
+.reservations-card {
+  width: 100%;
+  max-width: 640px;
+  background: #ffffff;
+  border-radius: 20px;
+  padding: 32px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+}
+.form_header {
+  text-align: center;
+  margin-bottom: 1rem;
 }
 
 .form-row {
@@ -33,9 +65,31 @@
   }
 }
 
+.time-picker {
+  border-color: pink !important;
+}
+
 .submit-wrapper {
   margin-top: 8px;
+  text-align: center;
+
+  .reservation_btn {
+    background-color: pink;
+    color: black;
+  }
+
+  .reservation_btn:active{
+    background-color: purple;
+    color: #f8f6f6;
+  }
+
+  .reservation_btn:disabled {
+    background: #e1d9d9;
+    cursor: not-allowed;
+  }
 }
+
+
 
 @media (max-width: 768px) {
   .form-row {

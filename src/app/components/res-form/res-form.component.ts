@@ -1,4 +1,4 @@
-import {ChangeDetectionStrategy, Component, OnInit} from '@angular/core';
+import {ChangeDetectionStrategy, Component, inject, OnInit} from '@angular/core';
 import {MAT_FORM_FIELD_DEFAULT_OPTIONS, MatError, MatFormField, MatHint, MatLabel} from "@angular/material/form-field";
 import {MatInput, MatInputModule} from "@angular/material/input";
 import {
@@ -19,6 +19,14 @@ import {MatRadioButton, MatRadioGroup} from "@angular/material/radio";
 import {CommonModule, DatePipe} from "@angular/common";
 import {MatButton} from "@angular/material/button";
 import {MAT_DATE_LOCALE} from "@angular/material/core";
+import {
+  MAT_TIMEPICKER_CONFIG,
+  MatTimepicker,
+  MatTimepickerInput, MatTimepickerOption,
+  MatTimepickerToggle
+} from "@angular/material/timepicker";
+import {DateAdapter, provideNativeDateAdapter} from '@angular/material/core';
+import {max} from "rxjs";
 
 
 @Component({
@@ -39,6 +47,9 @@ import {MAT_DATE_LOCALE} from "@angular/material/core";
     MatHint,
     MatButton,
     MatLabel,
+    MatTimepickerToggle,
+    MatTimepicker,
+    MatTimepickerInput,
   ],
   providers: [DatePipe,
     {provide: MAT_FORM_FIELD_DEFAULT_OPTIONS, useValue: {appearance: 'outline'}}],
@@ -57,6 +68,11 @@ export class ResFormComponent implements OnInit {
   public minDate: Date = new Date();
   public cookiesAccepted = false;
 
+  public minTime = new Date();
+  public maxTime= new Date();
+  timeOptions: { value: Date; label: string }[] = [];
+
+private readonly _adapter = inject<DateAdapter<unknown, unknown>>(DateAdapter);
 
   constructor(private fb: UntypedFormBuilder,
               private datePipe: DatePipe) {
@@ -64,6 +80,7 @@ export class ResFormComponent implements OnInit {
 
 
   public ngOnInit() {
+    this._adapter.setLocale('bg-BG');
     const today = new Date();
     this.minDate = new Date(
       today.getFullYear(),
@@ -71,16 +88,37 @@ export class ResFormComponent implements OnInit {
       today.getDate() + 1
     );
 
+    const base = new Date();
+    for (let hour = 8; hour <= 19; hour++) {
+      const date = new Date(base);
+      date.setHours(hour, 0, 0, 0);
+
+      this.timeOptions.push({
+        value: date,
+        label: `${hour.toString().padStart(2, '0')}:00`
+      });
+    }
+
     this.userForm = this.fb.group({
       firstName: this.fb.control('', [Validators.required, Validators.minLength(3)]),
       secondName: this.fb.control('', [Validators.required, Validators.minLength(3)]),
       phoneNumber: this.fb.control('', [Validators.required, this.phoneValidator()]),
       email: this.fb.control('', [Validators.required, Validators.email]),
       date: this.fb.control('', [Validators.required]),
-      reservationTime: [null, [Validators.required, this.dynamicTimeValidator.bind(this)]],
+      reservationTime: [null, [Validators.required]],
       option: this.fb.control(null, Validators.required)
     });
   }
+
+
+  public timeFilter = (date: Date | null): boolean => {
+    if (!date) return true;
+
+    const hour = date.getHours();
+    const minutes = date.getMinutes();
+
+    return hour >= 8 && hour <= 19 && minutes === 0;
+  };
 
   public onSubmit() {
     console.log(this.userForm.value);
@@ -111,6 +149,14 @@ export class ResFormComponent implements OnInit {
     return selectedDate < today ? {pastDate: true} : null;
   }
 
+  private onlyRoundHours(control: AbstractControl) {
+    const value: Date = control.value;
+
+    if (!value) return null;
+
+    return value.getMinutes() === 0 ? null : { notRoundHour: true };
+  }
+
 
   private dynamicTimeValidator(): ValidatorFn {
     return (control: AbstractControl): ValidationErrors | null => {
@@ -132,4 +178,6 @@ export class ResFormComponent implements OnInit {
       return null;
     };
   }
+
+  protected readonly max = max;
 }

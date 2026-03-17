@@ -1,134 +1,139 @@
 
-<form
-  [formGroup]="userForm"
-  (ngSubmit)="onSubmit()"
-  class="form-container"
->
-  <h2 class="form_header">
-    Reservation form
-  </h2>
+<div class="section-container">
+  <div class="reservations-card">
+    <form
+      [formGroup]="userForm"
+      (ngSubmit)="onSubmit()"
+      class="form-container"
+    >
+      <h3 class="form_header">
+        Reservation form
+      </h3>
 
-  <div class="form-row">
-    <mat-form-field appearance="outline" class="full-width">
-      <mat-label>First name</mat-label>
-      <input
-        matInput
-        id="firstName"
-        formControlName="firstName"
-        placeholder="First name"
-      />
-      <mat-error
-        *ngIf="userForm.get('firstName')?.invalid && userForm.get('firstName')?.touched"
-      >
-       First name error
-      </mat-error>
-    </mat-form-field>
+      <div class="form-row">
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Първо име</mat-label>
+          <input
+            matInput
+            id="firstName"
+            formControlName="firstName"
+            placeholder="Първо име"
+          />
+          <mat-error
+            *ngIf="userForm.get('firstName')?.invalid && userForm.get('firstName')?.touched"
+          >
+            First name error
+          </mat-error>
+        </mat-form-field>
 
-    <mat-form-field appearance="outline" class="full-width">
-      <mat-label>Last name</mat-label>
-      <input
-        matInput
-        id="secondName"
-        formControlName="secondName"
-        placeholder="Second name"
-      />
-      <mat-error
-        *ngIf="userForm.get('secondName')?.invalid && userForm.get('secondName')?.touched"
-      >
-        Last name error
-      </mat-error>
-    </mat-form-field>
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Last name</mat-label>
+          <input
+            matInput
+            id="secondName"
+            formControlName="secondName"
+            placeholder="Second name"
+          />
+          <mat-error
+            *ngIf="userForm.get('secondName')?.invalid && userForm.get('secondName')?.touched"
+          >
+            Last name error
+          </mat-error>
+        </mat-form-field>
+      </div>
+
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Phone number</mat-label>
+        <input
+          matInput
+          id="phoneNumber"
+          type="tel"
+          formControlName="phoneNumber"
+          placeholder="Phone number"
+        />
+        <mat-error
+          *ngIf="userForm.get('phoneNumber')?.invalid && userForm.get('phoneNumber')?.touched"
+        >
+          Phone number
+        </mat-error>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>E-mail</mat-label>
+        <input
+          matInput
+          id="email"
+          type="email"
+          formControlName="email"
+          placeholder="E-mail"
+        />
+        <mat-error
+          *ngIf="userForm.get('email')?.invalid && userForm.get('email')?.touched"
+        >
+          E-mail error
+        </mat-error>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Date</mat-label>
+        <input matInput [matDatepicker]="picker" [min]="minDate" formControlName="date">
+        <mat-hint>MM/DD/YYYY</mat-hint>
+        <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+        <mat-datepicker #picker></mat-datepicker>
+        <mat-error
+          *ngIf="userForm.get('date')?.invalid && userForm.get('date')?.touched"
+        >
+          Date error
+        </mat-error>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="full-width time-picker">
+        <mat-label>Pick a time</mat-label>
+        <input matInput formControlName="reservationTime"
+               [matTimepicker]="timePicker">
+        <mat-timepicker-toggle matIconSuffix [for]="timePicker"></mat-timepicker-toggle>
+        <mat-timepicker #timePicker [options]="timeOptions"></mat-timepicker>
+
+        <mat-hint *ngIf="userForm.get('date')?.value">
+          Time hint
+        </mat-hint>
+
+        <mat-error
+          *ngIf="userForm.get('reservationTime')?.invalid && userForm.get('reservationTime')?.touched"
+        >
+          Time error
+        </mat-error>
+
+        <mat-error
+          *ngIf="userForm.get('reservationTime')?.hasError('notRoundHour')"
+        >
+          Please select a full hour (e.g., 13:00).
+        </mat-error>
+      </mat-form-field>
+
+      <div class="radio-group-wrapper">
+        <mat-radio-group class="custom-radio-group" formControlName="option">
+          <mat-radio-button value="Group Training">
+            Group Training
+          </mat-radio-button>
+
+          <mat-radio-button value="Individual Training">
+            Individual Training
+          </mat-radio-button>
+        </mat-radio-group>
+      </div>
+
+      <div class="submit-wrapper">
+        <button
+          mat-raised-button
+          color="primary"
+          class="reservation_btn"
+          type="submit"
+          [disabled]="!userForm.valid"
+        >
+          Submit
+        </button>
+      </div>
+    </form>
   </div>
-
-  <mat-form-field appearance="outline" class="full-width">
-    <mat-label>Phone number</mat-label>
-    <input
-      matInput
-      id="phoneNumber"
-      type="tel"
-      formControlName="phoneNumber"
-      placeholder="Phone number"
-    />
-    <mat-error
-      *ngIf="userForm.get('phoneNumber')?.invalid && userForm.get('phoneNumber')?.touched"
-    >
-      Phone number
-    </mat-error>
-  </mat-form-field>
-
-  <mat-form-field appearance="outline" class="full-width">
-    <mat-label>E-mail</mat-label>
-    <input
-      matInput
-      id="email"
-      type="email"
-      formControlName="email"
-      placeholder="E-mail"
-    />
-    <mat-error
-      *ngIf="userForm.get('email')?.invalid && userForm.get('email')?.touched"
-    >
-      E-mail error
-    </mat-error>
-  </mat-form-field>
-
-  <mat-form-field appearance="outline" class="full-width">
-    <mat-label>Date</mat-label>
-    <input matInput [matDatepicker]="picker" [min]="minDate" formControlName="date">
-    <mat-hint>MM/DD/YYYY</mat-hint>
-    <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
-    <mat-datepicker #picker></mat-datepicker>
-    <mat-error
-      *ngIf="userForm.get('date')?.invalid && userForm.get('date')?.touched"
-    >
-    Date error
-    </mat-error>
-  </mat-form-field>
-
-  <mat-form-field appearance="outline" class="full-width">
-    <mat-label>Pick a time</mat-label>
-    <input matInput formControlName="reservationTime">
-    <mat-timepicker-toggle matIconSuffix></mat-timepicker-toggle>
-    <mat-timepicker #picker></mat-timepicker>
-
-    <mat-hint *ngIf="userForm.get('date')?.value">
-      Time hint
-    </mat-hint>
-
-    <mat-error
-      *ngIf="userForm.get('reservationTime')?.invalid && userForm.get('reservationTime')?.touched"
-    >
-      Time error
-    </mat-error>
-
-    <mat-error
-      *ngIf="userForm.get('reservationTime')?.hasError('notRoundHour')"
-    >
-      Please select a full hour (e.g., 13:00).
-    </mat-error>
-  </mat-form-field>
-
-  <div class="radio-group-wrapper">
-    <mat-radio-group class="custom-radio-group" formControlName="option">
-      <mat-radio-button value="Group Training">
-        Group Training
-      </mat-radio-button>
-
-      <mat-radio-button value="Individual Training">
-        Individual Training
-      </mat-radio-button>
-    </mat-radio-group>
-  </div>
-
-  <div class="submit-wrapper">
-    <button
-      mat-raised-button
-      color="primary"
-      class="reservation_btn"
-      type="submit"
-      [disabled]="!userForm.valid"
-    >
-      Submit
-    </button>
-  </div>
-</form>
+</div>
